@@ -18,6 +18,16 @@ module.exports.getMember = async (req, res, next) => {
     }
 }
 
+module.exports.getMembers = async (req, res, next) => {
+    const data = await MemberService.getMembers(req.query);
+    return {
+        status: 200,
+        data,
+        message: 'Successfully retrieved members'
+    }
+}
+
+
 module.exports.patchMember = async (req, res, next) => {
     const data = await MemberService.updateMember(req.params.member_id, req.body);
     return {

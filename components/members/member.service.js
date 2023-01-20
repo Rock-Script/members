@@ -23,3 +23,8 @@ module.exports.getMember = async(_id) => {
     const member = await MemberModel.getMember(_id);
     return member;
 }
+
+module.exports.getMembers = async(filter) => {
+    const members = await MemberModel.filter(filter);
+    return members;
+}

@@ -13,6 +13,14 @@ const routes = [
         handler: MemberController.postMember
     },
     {
+        path: `/${path}`,
+        method: ROUTE_METHODS.GET,
+        validation: {
+            query: MemberSchema.GET_MEMBERS
+        },
+        handler: MemberController.getMembers
+    },
+    {
         path: `/${path}/:member_id`,
         method: ROUTE_METHODS.PATCH,
         validation: {

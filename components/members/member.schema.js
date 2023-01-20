@@ -5,11 +5,14 @@ module.exports.GET_MEMBER = {
     member_id: ObjectId()
 }
 
+module.exports.GET_MEMBERS = {
+}
+
 module.exports.POST_MEMBER = {
     institute_id: ObjectId().required(),
     first_name: Joi.string().required().min(3).max(100),
     last_name: Joi.string().required().min(3).max(100),
-    address: Joi.string().required().min(3).max(100),
+    address: Joi.string().required().min(5).max(400),
     phone: phoneNumber().required(),
     email: Joi.string().email().required()
 }
