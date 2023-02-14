@@ -1,4 +1,5 @@
 const MemberModel = require('./member.model');
+const MemberEmailNotification = require('./member.email.notification');
 const HTTP_RESPONSES = require('../../template/contants/http-responses');
 const Reference = require('../../template/tools/reference-tool');
 
@@ -20,7 +21,13 @@ const verifyParams = async (params) => {
 module.exports.addMember = async(params) => {
     params = await verifyParams(params);
     const insert_response = await MemberModel.insertMember(params);
-    return this.getMember(insert_response?.insertedId);
+
+    // check if user created if not, create user
+    
+    // send invitation email
+    const member = await this.getMember(insert_response?.insertedId);
+    await MemberEmailNotification.sendSignupEmail(member);
+    return member;
 }
 
 module.exports.updateMember = async(_id, params) => {
