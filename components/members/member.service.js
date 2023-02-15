@@ -2,6 +2,7 @@ const MemberModel = require('./member.model');
 const MemberEmailNotification = require('./member.email.notification');
 const HTTP_RESPONSES = require('../../template/contants/http-responses');
 const Reference = require('../../template/tools/reference-tool');
+const Logger = require('../../template/tools/log.tool');
 
 const verifyParams = async (params) => {
     if (params.institute_id) {
@@ -19,14 +20,20 @@ const verifyParams = async (params) => {
 }
 
 module.exports.addMember = async(params) => {
+    Logger.info(`${__filename} addMember`);
     params = await verifyParams(params);
+    Logger.info(`${__filename} params: ${JSON.stringify(params)}`);
     const insert_response = await MemberModel.insertMember(params);
 
     // check if user created if not, create user
     
     // send invitation email
     const member = await this.getMember(insert_response?.insertedId);
-    await MemberEmailNotification.sendSignupEmail(member);
+    const token = JwtTool.sign({
+        _id: member._id.toString(),
+        email: member.email
+    }, 60);
+    await MemberEmailNotification.sendSignupEmail(member, token);
     return member;
 }
 
