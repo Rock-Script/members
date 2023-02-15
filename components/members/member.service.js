@@ -3,6 +3,9 @@ const MemberEmailNotification = require('./member.email.notification');
 const HTTP_RESPONSES = require('../../template/contants/http-responses');
 const Reference = require('../../template/tools/reference-tool');
 const Logger = require('../../template/tools/log.tool');
+const JwtTool = require('../../template/tools/jwt.tool');
+const UserMicroservice = require('../../template/microservices/user.microservice');
+const { getRandomString } = require('../../../template/tools/string.tool');
 
 const verifyParams = async (params) => {
     if (params.institute_id) {
@@ -24,16 +27,21 @@ module.exports.addMember = async(params) => {
     params = await verifyParams(params);
     Logger.info(`${__filename} params: ${JSON.stringify(params)}`);
     const insert_response = await MemberModel.insertMember(params);
-
+    const member = await this.getMember(insert_response?.insertedId);
     // check if user created if not, create user
+    let user = await Reference.getUserByEmail(member.email);
+    if (!user) {
+        const payload = {
+            first_name: member.first_name,
+            last_name: member.last_name,
+            password: `QuestAns!#_${getRandomString()}`,
+            phone: member.phone,
+            email: member.email
+        };
+        user = await UserMicroservice.createUser(payload)
+    }
     
     // send invitation email
-    const member = await this.getMember(insert_response?.insertedId);
-    const token = JwtTool.sign({
-        _id: member._id.toString(),
-        email: member.email
-    }, 60);
-    await MemberEmailNotification.sendSignupEmail(member, token);
     return member;
 }
 
