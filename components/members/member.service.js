@@ -5,7 +5,7 @@ const Reference = require('../../template/tools/reference-tool');
 const Logger = require('../../template/tools/log.tool');
 const JwtTool = require('../../template/tools/jwt.tool');
 const UserMicroservice = require('../../template/microservices/user.microservice');
-const { getRandomString } = require('../../../template/tools/string.tool');
+const { getRandomString } = require('../../template/tools/string.tool');
 
 const verifyParams = async (params) => {
     if (params.institute_id) {
